@@ -1,0 +1,34 @@
+
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>link respons</title>
+
+</head>
+<body>
+    <div  class="container" style="padding: 20%">
+        <form  action="/checkava/" class="form-group" method="POST" style="padding-top: 50px;">
+            {% csrf_token %}
+            <div class=" text-center col-md-12">
+             <!--<input id="user_link" class="form-control text-center" placeholder="Enter your link " type="text" required  /> -->
+             {{ form.as_p }}
+             <input class="btn btn-success  w-100"  style="margin-top:1%" type="submit" value="submit" />
+            </div>
+        </form>
+        <p>
+            {{ text }}
+            {{ matn }}
+        </p>
+    </div>
+</body>
+<style>
+body {
+    background: #00bf8f;  /* fallback for old browsers */
+background: -webkit-linear-gradient(to left, #001510, #00bf8f);  /* Chrome 10-25, Safari 5.1-6 */
+background: linear-gradient(to left, #001510, #00bf8f); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+
+}
+</style>
+</html>
