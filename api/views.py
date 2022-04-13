@@ -7,45 +7,40 @@ from .models import Log
 from .forms import link
 import requests
 import socket
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from rest_framework import status
 
 
+@api_view(['GET'])
 def openssh(request):
-    #  x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
-    # if x_forwarded_for:
-    #    ip = x_forwarded_for.split(',')[0]
-    # else:
-    #   ip = request.META.get('REMOTE_ADDR')
-    host_name = socket.gethostname()
-    ip = socket.gethostbyname(host_name)
-    terminal = 'iptables - A INPUT - p tcp -s' + ip + '--dport 22 -j ACCEPT'
-    os.system(terminal)
-    return HttpResponse("shh finally opened for your ip :" + ip)
+    # open port 22 for client
+    try:
+        host_name = socket.gethostname()
+        ip = socket.gethostbyname(host_name)
+        terminal = 'iptables - A INPUT - p tcp -s' + ip + '--dport 22 -j ACCEPT'
+        os.system(terminal)
+        return Response({'message': "shh finally opened for your ip :" + ip}, status.HTTP_200_OK)
+    except:
+        return Response({'error': "something wrong"}, status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-def checkme(request):
-    # return HttpResponse("working")
-    #   x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
-    #  if x_forwarded_for:
-    #     ip = x_forwarded_for.split(',')[0]
-    # else:
-    #    ip = request.META.get('REMOTE_ADDR')
-    host_name = socket.gethostname()
-    ip = socket.gethostbyname(host_name)
-
-    port22 = subprocess.check_output("nc -zv " + ip + " 22", shell=True)
-    port25 = subprocess.check_output("nc -zv " + ip + " 25", shell=True)
-    port80 = subprocess.check_output("nc -zv " + ip + " 80", shell=True)
-    port443 = subprocess.check_output("nc -zv " + ip + " 443", shell=True)
-    if (port22.find("succeeded") != -1):  # check porrt is open
-        return HttpResponse("port 22 is open")
-    if (port25.find("succeeded") != -1):
-        return HttpResponse("port 22 is open")
-    if (port80.find("succeeded") != -1):
-        return HttpResponse("port 22 is open")
-    if (port443.find("succeeded") != -1):
-        return HttpResponse("port 22 is open")
+@api_view(['POST'])
+def check_me(request):
+    # check client open ports
+    try:
+        host_name = socket.gethostname()
+        ip = socket.gethostbyname(host_name)
+        port = request.data["port"]
+    except:
+        return Response({'error': "send your request port"}, status.HTTP_400_BAD_REQUEST)
     else:
-        return HttpResponse("all port is safe")
+        if isinstance(port, int):
+            result = subprocess.check_output("nc -zv " + ip + str(port), shell=True)
+            if str(result).find("succeeded") != -1:  # port is open
+                return Response({'result': f"port {port} is open :" + ip}, status.HTTP_200_OK)
+        else:
+            return Response({'error': "send integer values"}, status.HTTP_400_BAD_REQUEST)
 
 
 def log(request):
