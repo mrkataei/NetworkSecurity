@@ -12,5 +12,6 @@ class Log(models.Model):
     )
     ip = models.CharField(max_length=30)
     operation = models.CharField(max_length=9, choices=operations)
+    system = models.CharField(max_length=200, blank=True)
     date = models.DateTimeField(auto_now_add=True)
 

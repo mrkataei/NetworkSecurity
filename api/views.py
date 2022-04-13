@@ -1,23 +1,33 @@
-from django.shortcuts import render
-from django.http import HttpResponse
 import os
-import subprocess
-import os.path
-from .models import Log
-from .forms import link
 import requests
 import socket
+import subprocess
+from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from rest_framework import status
+
+from . import models
+
+
+def create_log(request, operation):
+    host_name = socket.gethostname()
+    ip = socket.gethostbyname(host_name)
+    system = request.META.get('HTTP_USER_AGENT')
+    models.Log(ip=ip, system=system, operation=operation).save()
+    return ip
+
+
+@api_view(['GET'])
+def domain(request):
+    ip = create_log(request, 'domain')
+    return Response({'result': "your ip : " + ip}, status.HTTP_200_OK)
 
 
 @api_view(['GET'])
 def openssh(request):
     # open port 22 for client
     try:
-        host_name = socket.gethostname()
-        ip = socket.gethostbyname(host_name)
+        ip = create_log(request, 'ssh')
         terminal = 'iptables - A INPUT - p tcp -s' + ip + '--dport 22 -j ACCEPT'
         os.system(terminal)
         return Response({'message': "shh finally opened for your ip :" + ip}, status.HTTP_200_OK)
@@ -29,8 +39,7 @@ def openssh(request):
 def check_me(request):
     # check client open ports
     try:
-        host_name = socket.gethostname()
-        ip = socket.gethostbyname(host_name)
+        ip = create_log(request, 'check')
         port = request.data["port"]
     except:
         return Response({'error': "send your request port"}, status.HTTP_400_BAD_REQUEST)
@@ -43,79 +52,51 @@ def check_me(request):
             return Response({'error': "send integer values"}, status.HTTP_400_BAD_REQUEST)
 
 
+@api_view(['GET'])
 def log(request):
-    #  x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
-    # if x_forwarded_for:
-    #    ipAdd = x_forwarded_for.split(',')[0]
-    # else:
-    # ipAdd = request.META.get('REMOTE_ADDR')
-    host_name = socket.gethostname()
-    ipAdd = socket.gethostbyname(host_name)
-
-    #  headers = request.utils.default_headers()
-    user = request.META.get('HTTP_USER_AGENT')  # get user agent
-
-    log = Log(
-        user_agent=user,
-        ip=ipAdd,
-
-    )
-    log.save()
-
-    # user_A=log.user_agent
-    # ip_t=log.ip
-    return HttpResponse(log.FinishTime)
+    # response client his logs
+    ip = create_log(request, 'logs')
+    try:
+        logs = models.Log.objects.filter(ip=ip).values("ip", "operation",
+                                                       "system", "date")
+        return Response({'result': logs}, status.HTTP_200_OK)
+    except:
+        return Response({'error': "something wrong"}, status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
+@api_view(['GET'])
 def ddos(request):
-    #   x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
-    #    if x_forwarded_for:
-    #       ip = x_forwarded_for.split(',')[0]
-    #  else:
-    #     ip = request.META.get('REMOTE_ADDR')
-    host_name = socket.gethostname()
-    ip = socket.gethostbyname(host_name)
+    ip = create_log(request, 'ddos')
+    terminal = 'iptables -A INPUT -s ' + ip + ' -j DROP'
+    BASE = os.path.dirname(os.path.abspath(__file__))
     # firstRange=ip.split(".")[0]
     # SecondRange = ip.split(".")[1]
     # ThirdRange = ip.split(".")[2]
     # FourthRange = ip.split(".")[3]
     # ip='185.1.172.0'
-    is_iran = False
-    terminal = 'iptables -A INPUT -s ' + ip + ' -j DROP'
-    BASE = os.path.dirname(os.path.abspath(__file__))
-    # ip="185.172.68.0"
-    with open(os.path.join(BASE, "iranip.txt")) as f:
-        if ip in f.read():
-            is_iran = True
-    if not (is_iran):
-        os.system(terminal)
-        return HttpResponse(ip)
-    else:
-        return HttpResponse("welcomme iruni")
+    try:
+        # ip="185.172.68.0"
+        with open(os.path.join(BASE, "static/api/iran_ip.txt")) as f:
+            is_iran = True if ip in f.read() else False
+        if not is_iran:
+            os.system(terminal)
+            return Response({'result': "your ip is banned"}, status.HTTP_200_OK)
+        else:
+            return Response({'result': "welcome Iran"}, status.HTTP_200_OK)
+    except:
+        return Response({'error': "something wrong"}, status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
+@api_view(['POST'])
 def checkAvailability(request):
-    form = link(request.POST)
-    if form.is_valid():
-        text = form.cleaned_data['linkget']
+    # check client open ports
+    try:
+        create_log(request, 'available')
+        link = request.data["link"]
+    except:
+        return Response({'error': "send your request link"}, status.HTTP_400_BAD_REQUEST)
     else:
-        text = 'http://vu.um.ac.ir'
-    # hhtp=httplib2.HTTPConnectionWithTimeout(text).getresponse().status
-    # https=httplib2.HTTPSConnectionWithTimeout(text).getresponse().status
-
-    # h=urlopen(text)
-    # t=h.getcode()
-    req = requests.get(text)
-    http = req.status_code
-    if (http == 200):
-        res = "is open"
-    else:
-        res = "is close"
-    args = {'form': form, 'text': res, 'matn': text}
-    return render(request, 'form.html', args)
-
-
-def domin(request):
-    host_name = socket.gethostname()
-    ip = socket.gethostbyname(host_name)
-    return HttpResponse(ip)
+        req = requests.get(link)
+        http = req.status_code
+        result = "open" if http == 200 else "close"
+        return Response({'result': f"website is  {result}"}, status.HTTP_200_OK)
