@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="a3fe7b18-2d3c-4a93-b6c2-e7950f0d7162" name="Default Changelist" comment="Token Authentication added - create user added">
-      <change afterPath="$PROJECT_DIR$/user/permissions.py" afterDir="false" />
+    <list default="true" id="a3fe7b18-2d3c-4a93-b6c2-e7950f0d7162" name="Default Changelist" comment="profile api added - permissions.py added">
+      <change afterPath="$PROJECT_DIR$/api/migrations/0001_initial.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/api/migrations/0002_rename_countries_whiteip_country.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/api/serializers.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/user/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/user/urls.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/user/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/user/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/api/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/api/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/api/views.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -67,7 +70,7 @@
     <property name="DefaultHtmlFileTemplate" value="HTML File" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../../Desktop/Django/django-course2/[FVPHT9803] Django_Rest_Web_APIs/Files_and_codes/S01-07/Files/code" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/api" />
     <property name="list.type.of.created.stylesheet" value="CSS" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.selected.package.eslint" value="(autodetect)" />
@@ -188,7 +191,14 @@
       <option name="project" value="LOCAL" />
       <updated>1649850324719</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="profile api added - permissions.py added">
+      <created>1650440445990</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1650440445990</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -213,6 +223,7 @@
     <MESSAGE value="ddos and other APIs added model updated, logs added" />
     <MESSAGE value="clean" />
     <MESSAGE value="README.md added" />
-    <option name="LAST_COMMIT_MESSAGE" value="README.md added" />
+    <MESSAGE value="profile api added - permissions.py added" />
+    <option name="LAST_COMMIT_MESSAGE" value="profile api added - permissions.py added" />
   </component>
 </project>

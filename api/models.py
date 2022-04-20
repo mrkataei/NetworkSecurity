@@ -15,3 +15,9 @@ class Log(models.Model):
     system = models.CharField(max_length=200, blank=True)
     date = models.DateTimeField(auto_now_add=True)
 
+
+class WhiteIP(models.Model):
+    ip = models.CharField(primary_key=True, max_length=30, unique=True)
+    country = models.CharField(max_length=30, null=True, blank=True)
+    created_at = models.DateTimeField(null=True, blank=True)
+    updated_at = models.DateTimeField(null=True, blank=True)
